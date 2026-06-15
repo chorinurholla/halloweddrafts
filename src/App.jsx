@@ -197,6 +197,8 @@ function DevotionView({ child, journeyDay, onComplete, familyId }) {
   const [loading, setLoading] = useState(true)
   const [completing, setCompleting] = useState(false)
   const [loadingMsg, setLoadingMsg] = useState('Opening God\'s Word...')
+  const [showParentNotes, setShowParentNotes] = useState(false)
+  const [devotionLength, setDevotionLength] = useState('standard')
 
   const journey = THEMATIC_JOURNEY[journeyDay % THEMATIC_JOURNEY.length]
   const themeStyle = getThemeStyle(journey.visualTheme)
@@ -205,6 +207,7 @@ function DevotionView({ child, journeyDay, onComplete, familyId }) {
     'Opening God\'s Word... 📖',
     'Finding today\'s treasure... 💎',
     'Preparing your adventure... 🗺️',
+    'Connecting the Old and New... 🌉',
     'Almost ready! ✨'
   ]
 
@@ -219,11 +222,13 @@ function DevotionView({ child, journeyDay, onComplete, familyId }) {
 
   useEffect(() => {
     generateDevotion()
-  }, [journeyDay, child?.age_tier])
+  }, [journeyDay, child?.age_tier, devotionLength])
 
   const generateDevotion = async () => {
     setLoading(true)
     setDevotion(null)
+
+    const cacheKey = `${journeyDay}-${devotionLength}`
 
     // Check cache first
     try {
@@ -231,7 +236,7 @@ function DevotionView({ child, journeyDay, onComplete, familyId }) {
         .from('devotion_cache')
         .select('content')
         .eq('journey_day', journeyDay)
-        .eq('age_tier', child.age_tier)
+        .eq('age_tier', `${child.age_tier}-${devotionLength}`)
         .maybeSingle()
       
       if (cached?.content) {
@@ -241,39 +246,91 @@ function DevotionView({ child, journeyDay, onComplete, familyId }) {
       }
     } catch (e) { /* cache miss, continue */ }
 
-    // Get principles from corpus
+    // Get ALL principles from both chapters — full corpus depth
     const otPrinciples = getPrinciplesFor(journey.ot.book, journey.ot.ch)
     const ntPrinciples = getPrinciplesFor(journey.nt.book, journey.nt.ch)
     
+    // Build rich corpus context with principle + application
     const corpusContext = [
-      ...otPrinciples.map(p => `[${p.book} ${p.chapter}] ${p.title}: ${p.principle}`),
-      ...ntPrinciples.map(p => `[${p.book} ${p.chapter}] ${p.title}: ${p.principle}`)
+      `=== ${journey.ot.book} ${journey.ot.ch} (Old Testament) ===`,
+      ...otPrinciples.map((p, i) => 
+        `${i+1}. "${p.title}" (${p.verse_ref})\n   Principle: ${p.principle}\n   Application: ${p.application}`
+      ),
+      '',
+      `=== ${journey.nt.book} ${journey.nt.ch} (New Testament) ===`,
+      ...ntPrinciples.map((p, i) => 
+        `${i+1}. "${p.title}" (${p.verse_ref})\n   Principle: ${p.principle}\n   Application: ${p.application}`
+      ),
     ].join('\n')
 
-    const tierDesc = {
-      preschool: 'a 3-5 year old (very simple words, short sentences, concrete images, no abstract theology)',
-      elementary: 'a 6-8 year old (simple but engaging, some wonder and questions, relatable examples)',
-      upper: 'a 9-12 year old (can handle deeper ideas, real-life application, thoughtful questions)'
+    // God Shot context (shared spiritual insight for the chapter)
+    const godShot = otPrinciples[0]?.god_shot || ntPrinciples[0]?.god_shot || ''
+
+    const tierConfig = {
+      preschool: {
+        desc: 'a 3-5 year old',
+        style: 'Use very simple words (1-2 syllable). Short sentences. Concrete images (animals, families, colors). No abstract theology. Use repetition. Make God feel like a loving parent. 1-2 short paragraphs for story.',
+        storyLen: '1-2 short paragraphs (50-80 words total)',
+        tokenBudget: 800,
+      },
+      elementary: {
+        desc: 'a 6-8 year old',
+        style: 'Simple but engaging language. Some wonder and curiosity. Relatable school/friend/family examples. Can understand cause and effect. Introduce Bible characters as real people with real feelings. 2-3 paragraphs.',
+        storyLen: '2-3 paragraphs (100-180 words total)',
+        tokenBudget: 1200,
+      },
+      upper: {
+        desc: 'a 9-12 year old',
+        style: 'Can handle deeper ideas, real-world application, moral complexity. Connect to their social world (friendships, fairness, identity, peer pressure). Ask questions that make them think. Treat them as capable of serious discipleship. 3-5 paragraphs.',
+        storyLen: '3-5 paragraphs (200-350 words total)',
+        tokenBudget: 1800,
+      }
     }
 
-    const systemPrompt = `You are a warm, engaging children's Bible teacher creating a daily devotion for ${tierDesc[child.age_tier]}.
+    const tier = tierConfig[child.age_tier] || tierConfig.elementary
 
-The devotion theme is "${journey.theme}" pairing ${journey.ot.book} ${journey.ot.ch} with ${journey.nt.book} ${journey.nt.ch}.
+    const lengthModifier = devotionLength === 'short' 
+      ? '\nKEEP IT SHORT — roughly half the normal length. Hit the key point fast.'
+      : devotionLength === 'deep'
+      ? '\nGO DEEPER — expand the story, add a second discussion question, and give a more substantive application challenge.'
+      : ''
 
-CORPUS PRINCIPLES (from the scholar's own study — ground your content in these):
+    const systemPrompt = `You are a gifted children's discipleship teacher. You are NOT writing a generic Sunday school lesson — you are building a child's lifelong relationship with Scripture. Your devotion must be GROUNDED in the specific timeless principles from the scholar's corpus below.
+
+TARGET: ${tier.desc}
+STYLE: ${tier.style}
+${lengthModifier}
+
+TODAY'S SCRIPTURE PAIRING:
+Old Testament: ${journey.ot.book} ${journey.ot.ch}
+New Testament: ${journey.nt.book} ${journey.nt.ch}
+Category: ${journey.category}
+
+SCHOLAR'S CORPUS PRINCIPLES (these are the backbone — draw directly from them):
 ${corpusContext || 'No specific principles found — use the biblical text directly.'}
 
-Return ONLY valid JSON (no markdown, no backticks) with this exact structure:
+${godShot ? `SCHOLAR'S GOD SHOT (the spiritual heartbeat of this passage):\n${godShot}\n` : ''}
+
+DISCIPLESHIP APPROACH:
+1. STORY: Retell what happens in these chapters in a way that makes the child FEEL it — not a summary, but a narrative that draws them in. Connect the OT and NT passages to show how God's story holds together.
+2. TRUTH: Translate the scholar's principle into language the child owns. This is the "big idea" they carry out the door.
+3. APPLICATION: Give them something SPECIFIC to do today — not "be kind" but "find one person who looks lonely at recess and sit with them."
+4. PRAYER: Model honest, specific prayer — not religious filler.
+
+Return ONLY valid JSON (no markdown, no backticks, no preamble):
 {
-  "story": "A warm, engaging retelling connecting both passages (3-5 paragraphs for upper, 2-3 for elementary, 1-2 for preschool)",
-  "scripture": "One key verse quoted from either passage",
+  "title": "A child-friendly title for today's devotion (5-8 words)",
+  "story": "${tier.storyLen} — a warm, vivid retelling that connects both passages and draws from the corpus principles",
+  "scripture": "One key verse quoted word-for-word",
   "scripture_ref": "Book Chapter:Verse",
-  "big_idea": "One sentence the child can remember all day",
-  "think_about": "One age-appropriate discussion question",
-  "prayer": "A short prayer the child can pray (2-3 sentences)",
-  "memory_verse": "A short, memorable verse from the passage",
+  "big_idea": "One memorable sentence capturing the core principle — the thing they remember at bedtime",
+  "think_about": "One age-appropriate question that requires genuine thought, not a yes/no answer",
+  "application_challenge": "One specific, concrete thing the child can do TODAY to live this out",
+  "prayer": "A short, honest prayer the child can pray in their own voice (2-4 sentences)",
+  "memory_verse": "A short, memorable verse from one of the passages",
   "memory_verse_ref": "Book Chapter:Verse",
-  "fun_fact": "One interesting Bible fact related to the passage"
+  "fun_fact": "One genuinely interesting fact about the passage, the Bible book, or the historical context",
+  "parent_discussion": "2-3 follow-up questions a parent can use at dinner to go deeper with the child"
 }`
 
     try {
@@ -282,8 +339,8 @@ Return ONLY valid JSON (no markdown, no backticks) with this exact structure:
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           system: systemPrompt,
-          messages: [{ role: 'user', content: `Create today's devotion: "${journey.title}" — ${journey.theme}` }],
-          max_tokens: 1500
+          messages: [{ role: 'user', content: `Create today's discipleship devotion for Day ${journeyDay + 1}: ${journey.ot.book} ${journey.ot.ch} + ${journey.nt.book} ${journey.nt.ch} (${journey.category})` }],
+          max_tokens: tier.tokenBudget
         })
       })
 
@@ -300,7 +357,7 @@ Return ONLY valid JSON (no markdown, no backticks) with this exact structure:
       try {
         await supabase.from('devotion_cache').upsert({
           journey_day: journeyDay,
-          age_tier: child.age_tier,
+          age_tier: `${child.age_tier}-${devotionLength}`,
           content: parsed
         })
       } catch (e) { /* cache write fail is non-critical */ }
@@ -310,15 +367,18 @@ Return ONLY valid JSON (no markdown, no backticks) with this exact structure:
       // Fallback devotion from corpus
       const fallbackP = otPrinciples[0] || ntPrinciples[0]
       setDevotion({
+        title: fallbackP ? fallbackP.title : `${journey.ot.book} ${journey.ot.ch}`,
         story: fallbackP ? fallbackP.principle : 'Today we explore how God shows His love through His Word.',
         scripture: '',
         scripture_ref: `${journey.ot.book} ${journey.ot.ch}`,
-        big_idea: fallbackP ? fallbackP.title : journey.theme,
-        think_about: 'What does this teach us about God?',
+        big_idea: fallbackP ? fallbackP.title : journey.category,
+        think_about: 'What does this teach us about who God is?',
+        application_challenge: 'Talk to someone today about one thing you learned from the Bible.',
         prayer: 'Dear God, thank You for Your Word. Help me understand and live by it today. Amen.',
         memory_verse: '',
         memory_verse_ref: '',
-        fun_fact: `The book of ${journey.ot.book} is part of the ${BIBLE_BOOKS.find(b => b.name === journey.ot.book)?.section || 'Bible'}.`
+        fun_fact: `The book of ${journey.ot.book} is part of the ${BIBLE_BOOKS.find(b => b.name === journey.ot.book)?.section || 'Bible'}.`,
+        parent_discussion: 'What stood out to you in today\'s reading? How can we apply this as a family?'
       })
     }
     
@@ -346,11 +406,34 @@ Return ONLY valid JSON (no markdown, no backticks) with this exact structure:
       {/* Hero */}
       <div className="devotion-hero" style={{ background: themeStyle.gradient }}>
         <div className="devotion-hero-day">Day {journeyDay + 1} · {journey.category}</div>
-        <h1 className="devotion-hero-title">{journey.title}</h1>
+        <h1 className="devotion-hero-title">{devotion?.title || `${journey.ot.book} ${journey.ot.ch}`}</h1>
         <div className="devotion-hero-theme">
           {journey.ot.book} {journey.ot.ch} + {journey.nt.book} {journey.nt.ch}
         </div>
         <div className="devotion-hero-emoji">{themeStyle.icon}</div>
+      </div>
+
+      {/* Devotion Length Selector */}
+      <div style={{ display: 'flex', gap: 6, padding: '10px 20px', justifyContent: 'center' }}>
+        {[
+          { key: 'short', label: '⚡ Quick', desc: '2 min' },
+          { key: 'standard', label: '📖 Standard', desc: '5 min' },
+          { key: 'deep', label: '🔍 Go Deep', desc: '10 min' },
+        ].map(opt => (
+          <button
+            key={opt.key}
+            onClick={() => setDevotionLength(opt.key)}
+            style={{
+              flex: 1, padding: '6px 8px', borderRadius: 8, border: 'none',
+              background: devotionLength === opt.key ? 'var(--lb-primary)' : '#F0F0F0',
+              color: devotionLength === opt.key ? 'white' : '#666',
+              fontFamily: 'var(--font-body)', fontSize: 12, fontWeight: 600,
+              cursor: 'pointer',
+            }}
+          >
+            {opt.label}<br /><span style={{ fontSize: 10, opacity: 0.8 }}>{opt.desc}</span>
+          </button>
+        ))}
       </div>
 
       <div className="devotion-body">
@@ -375,7 +458,7 @@ Return ONLY valid JSON (no markdown, no backticks) with this exact structure:
         {/* Big Idea */}
         {devotion?.big_idea && (
           <div className="devotion-section">
-            <div className="devotion-section-title">💡 Big Idea</div>
+            <div className="devotion-section-title">💡 The Big Idea</div>
             <div className="devotion-text" style={{ fontWeight: 600, fontSize: 17, color: 'var(--lb-primary-dark)' }}>
               {devotion.big_idea}
             </div>
@@ -387,6 +470,21 @@ Return ONLY valid JSON (no markdown, no backticks) with this exact structure:
           <div className="devotion-section">
             <div className="devotion-section-title">🤔 Think About It</div>
             <div className="devotion-question">{devotion.think_about}</div>
+          </div>
+        )}
+
+        {/* Application Challenge — the discipleship action step */}
+        {devotion?.application_challenge && (
+          <div className="devotion-section">
+            <div className="devotion-section-title">🎯 Today's Challenge</div>
+            <div className="devotion-text" style={{ 
+              background: 'var(--lb-primary-light, #E8F4FD)', 
+              padding: '12px 16px', borderRadius: 12, 
+              fontWeight: 500, fontSize: 15,
+              borderLeft: '4px solid var(--lb-primary)'
+            }}>
+              {devotion.application_challenge}
+            </div>
           </div>
         )}
 
@@ -414,6 +512,28 @@ Return ONLY valid JSON (no markdown, no backticks) with this exact structure:
           <div className="devotion-section">
             <div className="devotion-section-title">🌟 Did You Know?</div>
             <div className="devotion-text">{devotion.fun_fact}</div>
+          </div>
+        )}
+
+        {/* Parent Discussion Notes — toggleable */}
+        {devotion?.parent_discussion && (
+          <div className="devotion-section">
+            <button
+              onClick={() => setShowParentNotes(!showParentNotes)}
+              style={{
+                width: '100%', padding: '10px 16px', borderRadius: 10,
+                border: '1px dashed #ccc', background: showParentNotes ? '#FFF8E1' : '#FAFAFA',
+                fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14,
+                color: '#666', cursor: 'pointer', textAlign: 'left'
+              }}
+            >
+              👨‍👩‍👧 {showParentNotes ? 'Hide' : 'Show'} Parent Discussion Guide
+            </button>
+            {showParentNotes && (
+              <div style={{ marginTop: 10, padding: '12px 16px', background: '#FFF8E1', borderRadius: 10, fontSize: 14, lineHeight: 1.6 }}>
+                {devotion.parent_discussion}
+              </div>
+            )}
           </div>
         )}
 
@@ -447,7 +567,12 @@ function ExploreView({ child }) {
     'God\'s Promises': '🌈',
     'Serving Others': '🤲',
     'Standing Firm': '⚔️',
-    'Joy & Praise': '🎉'
+    'Joy & Praise': '🎉',
+    'Obedience & Trust': '🔑',
+    'Justice & Mercy': '⚖️',
+    'Leadership & Calling': '🏔️',
+    'Community & Unity': '🤝',
+    'Suffering & Hope': '🌅'
   }
 
   const categoryCounts = {}
@@ -502,7 +627,7 @@ function ExploreView({ child }) {
       </div>
       <div className="explore-grid">
         {CONTENT_CATEGORIES.map((cat, i) => {
-          const colors = ['#4A90D9', '#4CAF50', '#FF6B6B', '#9B59B6', '#F5A623', '#0277BD', '#E65100', '#2E7D32', '#C62828', '#00796B']
+          const colors = ['#4A90D9', '#4CAF50', '#FF6B6B', '#9B59B6', '#F5A623', '#0277BD', '#E65100', '#2E7D32', '#C62828', '#00796B', '#5D4037', '#37474F', '#1565C0', '#6A1B9A', '#EF6C00']
           return (
             <button
               key={cat}
