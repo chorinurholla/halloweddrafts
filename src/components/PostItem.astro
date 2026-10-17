@@ -1,0 +1,22 @@
+---
+import type { Post } from '../lib/posts';
+import { formatDate, isoDate, readingMinutes, smart } from '../lib/posts';
+
+interface Props { post: Post; number: number }
+const { post, number } = Astro.props;
+const url = `/posts/${post.id}`;
+---
+<li class="post-item" data-post={post.id} data-date={isoDate(post.data.date)}>
+  <span class="post-num" aria-hidden="true">{String(number).padStart(2, '0')}</span>
+  <div>
+    <h2><a href={url}>{smart(post.data.title)}</a></h2>
+    <p class="excerpt">{smart(post.data.excerpt)}</p>
+    <ul class="tags" aria-label="Tags">
+      {post.data.tags.map((t) => <li><a href={`/tags/${t}`}>{t}</a></li>)}
+    </ul>
+    <p class="meta">
+      <time datetime={isoDate(post.data.date)}>{formatDate(post.data.date)}</time> · {readingMinutes(post)} min read<span data-reads={post.id} hidden></span>
+    </p>
+  </div>
+  <span class="post-arrow" aria-hidden="true">→</span>
+</li>

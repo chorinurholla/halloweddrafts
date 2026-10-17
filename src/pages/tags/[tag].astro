@@ -1,0 +1,25 @@
+---
+import ListPage from '../../components/ListPage.astro';
+import { TOPICS } from '../../lib/site';
+import { getPosts, tagCounts } from '../../lib/posts';
+
+export async function getStaticPaths() {
+  const all = await getPosts();
+  return [...tagCounts(all).keys()].map((tag) => ({ params: { tag } }));
+}
+const all = await getPosts();
+const tag = Astro.params.tag!;
+const tagged = all.filter((p) => p.data.tags.includes(tag));
+// Thin (1 post) or topic-duplicate tag pages stay out of search results.
+const noindex = tagged.length < 2 || tag in TOPICS;
+---
+<ListPage
+  allPosts={all}
+  posts={tagged}
+  current={null}
+  heading={`Tagged: ${tag}`}
+  countLabel={String(tagged.length)}
+  title={`Tagged ${tag}`}
+  description={`Writing tagged ${tag} on Hallowed Drafts.`}
+  noindex={noindex}
+/>

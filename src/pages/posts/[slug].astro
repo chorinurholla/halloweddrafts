@@ -1,0 +1,92 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { SITE, TOPICS } from '../../lib/site';
+import { formatDate, getPosts, isoDate, neighbours, readingMinutes, related, smart, type Post } from '../../lib/posts';
+
+export async function getStaticPaths() {
+  const all = await getPosts();
+  return all.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+const { post } = Astro.props as { post: Post };
+const all = await getPosts();
+const { Content } = await render(post);
+const { newer, older } = neighbours(all, post);
+const rel = related(all, post, [newer?.id, older?.id].filter(Boolean) as string[]);
+const topic = TOPICS[post.data.topic];
+const words = (post.body ?? '').split(/\s+/).filter(Boolean).length;
+const quotesScripture = !!post.data.translation || !!post.data.translationNote;
+const translationNote = post.data.translationNote ?? (quotesScripture ? SITE.defaultTranslationNote : null);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: post.data.title,
+  description: post.data.excerpt,
+  datePublished: isoDate(post.data.date),
+  dateModified: isoDate(post.data.updated ?? post.data.date),
+  author: { '@type': 'Person', name: SITE.author },
+  keywords: post.data.tags.join(', '),
+  wordCount: words,
+  mainEntityOfPage: new URL(`/posts/${post.id}`, SITE.url).href,
+};
+---
+<Base title={post.data.title} description={post.data.excerpt} type="article" jsonLd={jsonLd}>
+  <article class="post" data-pagefind-body data-view-slug={post.id}>
+    <a class="back-link" href="/" data-pagefind-ignore>← All writing</a>
+    <div data-pagefind-ignore>
+      <a class="topic-label" href={`/${post.data.topic}`}>{topic.label}</a>
+    </div>
+    <h1 data-pagefind-meta="title">{smart(post.data.title)}</h1>
+    <p class="meta post-meta" data-pagefind-ignore>
+      <time datetime={isoDate(post.data.date)} data-pagefind-meta="date">{formatDate(post.data.date)}</time>
+      · {readingMinutes(post)} min read
+      {post.data.updated && <> · Updated {formatDate(post.data.updated)}</>}
+      <span data-reads={post.id} hidden></span>
+    </p>
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    <div class="post-end" data-pagefind-ignore>
+      {translationNote && <p class="translation-note">{translationNote}</p>}
+      <ul class="tags" aria-label="Tags">
+        {post.data.tags.map((t) => <li><a href={`/tags/${t}`}>{t}</a></li>)}
+      </ul>
+
+      {(newer || older || rel.length > 0) && (
+        <div class="onward">
+          {(older || newer) && (
+            <nav class="prev-next" aria-label={`More in ${topic.label}`}>
+              {older ? (
+                <a class="prev" href={`/posts/${older.id}`}>
+                  <span class="pn-label">← Previous in {topic.label}</span>
+                  <span class="pn-title">{smart(older.data.title)}</span>
+                </a>
+              ) : <span></span>}
+              {newer && (
+                <a class="next" href={`/posts/${newer.id}`}>
+                  <span class="pn-label">Next in {topic.label} →</span>
+                  <span class="pn-title">{smart(newer.data.title)}</span>
+                </a>
+              )}
+            </nav>
+          )}
+          {rel.length > 0 && (
+            <section class="related" aria-labelledby="related-heading">
+              <h2 id="related-heading">Related</h2>
+              <ul>
+                {rel.map((r) => (
+                  <li><a href={`/posts/${r.id}`}><span>{smart(r.data.title)}</span><time datetime={isoDate(r.data.date)}>{formatDate(r.data.date)}</time></a></li>
+                ))}
+              </ul>
+            </section>
+          )}
+        </div>
+      )}
+
+      <p class="about-line">{SITE.about}</p>
+    </div>
+  </article>
+</Base>

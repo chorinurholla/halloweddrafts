@@ -1,0 +1,21 @@
+---
+import Base from '../layouts/Base.astro';
+import { formatDate, getPosts, isoDate, smart } from '../lib/posts';
+
+const latest = (await getPosts()).slice(0, 3);
+---
+<Base title="Not found" noindex>
+  <section class="utility">
+    <h1>This page isn’t here</h1>
+    <p>It may have moved, or the link was mistyped. Search, or start with the latest writing.</p>
+    <p><button class="btn" type="button" data-search-open>Search the writing</button></p>
+    <div class="related">
+      <h2>Latest</h2>
+      <ul>
+        {latest.map((p) => (
+          <li><a href={`/posts/${p.id}`}><span>{smart(p.data.title)}</span><time datetime={isoDate(p.data.date)}>{formatDate(p.data.date)}</time></a></li>
+        ))}
+      </ul>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,11 @@
+---
+import Base from '../layouts/Base.astro';
+// Shareable search: /search?q=prayer opens the search overlay with the query filled in.
+---
+<Base title="Search" noindex>
+  <section class="utility" data-search-page>
+    <h1>Search</h1>
+    <p>Find any post by its words.</p>
+    <p><button class="btn" type="button" data-search-open>Open search</button></p>
+  </section>
+</Base>

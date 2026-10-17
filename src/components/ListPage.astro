@@ -1,0 +1,80 @@
+---
+import Base from '../layouts/Base.astro';
+import PostItem from './PostItem.astro';
+import { SITE, TOPICS, type TopicKey } from '../lib/site';
+import { liveTopics, type Post } from '../lib/posts';
+
+interface Props {
+  allPosts: Post[];          // every published post (for filters and stats)
+  posts: Post[];             // posts on this page
+  current: 'latest' | 'popular' | TopicKey | null;
+  heading: string;           // the h1
+  showDate?: boolean;        // journal date line (Home and Popular)
+  lead?: string;             // line under the heading
+  countLabel?: string;       // e.g. "10" or "4"
+  title?: string;            // <title> override
+  description?: string;
+  noindex?: boolean;
+  note?: string;             // small note above the list
+  page?: number;
+  pageCount?: number;
+  baseHref?: string;         // for pagination, e.g. "" or "/prayer"
+  offset?: number;           // numbering offset for later pages
+  isPopular?: boolean;
+  isHome?: boolean;
+}
+const {
+  allPosts, posts, current, heading, showDate = false, lead, countLabel, title, description, noindex,
+  note, page = 1, pageCount = 1, baseHref = '', offset = 0, isPopular = false, isHome = false,
+} = Astro.props;
+
+const topics = liveTopics(allPosts);
+const filters = [
+  { key: 'latest', label: 'Latest', href: '/' },
+  { key: 'popular', label: 'Popular', href: '/popular' },
+  ...topics.map((t) => ({ key: t, label: TOPICS[t].label, href: `/${t}` })),
+];
+const now = new Date();
+const month = now.toLocaleString('en-GB', { month: 'long', timeZone: 'UTC' });
+const year = now.getUTCFullYear();
+const pageHref = (n: number) => (n === 1 ? baseHref || '/' : `${baseHref}/page/${n}`);
+---
+<Base title={title} description={description} noindex={noindex}>
+  <div class="list-layout">
+    <section class="intro" aria-labelledby="page-heading">
+      {showDate && (
+        <p class="journal-date"><span>{month}</span><span>{year}</span></p>
+      )}
+      <h1 class="statement" id="page-heading">
+        {isHome && <span class="visually-hidden">{SITE.name}: </span>}{heading}
+      </h1>
+      {lead && <p class={isHome ? 'site-line' : 'topic-intro'}>{lead}</p>}
+      <dl class="stats">
+        <div><dt>Articles</dt><dd>{countLabel ?? allPosts.length}</dd></div>
+        {isHome && <div data-total-reads hidden><dt>Total reads</dt><dd></dd></div>}
+      </dl>
+      <nav class="filters" aria-label="Browse writing">
+        <ul>
+          {filters.map((f) => (
+            <li><a href={f.href} aria-current={f.key === current ? 'page' : undefined}>{f.label}</a></li>
+          ))}
+        </ul>
+      </nav>
+    </section>
+
+    <section aria-label="Posts">
+      {(note || isPopular) && <p class="list-note" data-list-note>{note}</p>}
+      <ol class="post-list" data-post-list={isPopular ? 'popular' : undefined} start={offset + 1}>
+        {posts.map((p, i) => <PostItem post={p} number={offset + i + 1} />)}
+      </ol>
+      {posts.length === 0 && <p class="list-note">Nothing published yet.</p>}
+      {pageCount > 1 && (
+        <nav class="pagination" aria-label="Pages">
+          {page > 1 ? <a href={pageHref(page - 1)}>← Newer</a> : <span></span>}
+          <span>Page {page} of {pageCount}</span>
+          {page < pageCount ? <a href={pageHref(page + 1)}>Older →</a> : <span></span>}
+        </nav>
+      )}
+    </section>
+  </div>
+</Base>

@@ -1,0 +1,19 @@
+---
+import ListPage from '../components/ListPage.astro';
+import { SITE } from '../lib/site';
+import { getPosts, paginate } from '../lib/posts';
+
+const all = await getPosts();
+const pages = paginate(all, SITE.postsPerPage);
+---
+<ListPage
+  allPosts={all}
+  posts={pages[0]}
+  current="latest"
+  heading={SITE.tagline}
+  showDate
+  isHome
+  lead={SITE.description}
+  page={1}
+  pageCount={pages.length}
+/>

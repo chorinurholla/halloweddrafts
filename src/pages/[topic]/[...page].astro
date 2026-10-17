@@ -1,0 +1,34 @@
+---
+import ListPage from '../../components/ListPage.astro';
+import { SITE, TOPICS, type TopicKey } from '../../lib/site';
+import { getPosts, liveTopics, paginate } from '../../lib/posts';
+
+// One page per topic that has posts: /prayer, /prayer/page/2 …
+export async function getStaticPaths() {
+  const all = await getPosts();
+  return liveTopics(all).flatMap((topic) => {
+    const pages = paginate(all.filter((p) => p.data.topic === topic), SITE.postsPerPage);
+    return pages.map((_, i) => ({ params: { topic, page: i === 0 ? undefined : `page/${i + 1}` } }));
+  });
+}
+const all = await getPosts();
+const topic = Astro.params.topic as TopicKey;
+const inTopic = all.filter((p) => p.data.topic === topic);
+const pages = paginate(inTopic, SITE.postsPerPage);
+const n = Astro.params.page ? Number(Astro.params.page.split('/')[1]) : 1;
+const { label, intro } = TOPICS[topic];
+---
+<ListPage
+  allPosts={all}
+  posts={pages[n - 1]}
+  current={topic}
+  heading={label}
+  lead={intro}
+  countLabel={String(inTopic.length)}
+  title={n > 1 ? `${label}, page ${n}` : label}
+  description={intro}
+  page={n}
+  pageCount={pages.length}
+  baseHref={`/${topic}`}
+  offset={(n - 1) * SITE.postsPerPage}
+/>

@@ -1,0 +1,25 @@
+---
+import ListPage from '../../components/ListPage.astro';
+import { SITE } from '../../lib/site';
+import { getPosts, paginate } from '../../lib/posts';
+
+export async function getStaticPaths() {
+  const all = await getPosts();
+  const pages = paginate(all, SITE.postsPerPage);
+  return pages.slice(1).map((_, i) => ({ params: { page: String(i + 2) } }));
+}
+const all = await getPosts();
+const pages = paginate(all, SITE.postsPerPage);
+const n = Number(Astro.params.page);
+---
+<ListPage
+  allPosts={all}
+  posts={pages[n - 1]}
+  current="latest"
+  heading={SITE.tagline}
+  showDate
+  title={`Page ${n}`}
+  page={n}
+  pageCount={pages.length}
+  offset={(n - 1) * SITE.postsPerPage}
+/>

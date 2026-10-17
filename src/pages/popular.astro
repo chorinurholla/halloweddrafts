@@ -1,0 +1,20 @@
+---
+import ListPage from '../components/ListPage.astro';
+import { SITE } from '../lib/site';
+import { getPosts } from '../lib/posts';
+
+// Rendered newest first; the browser reorders by live read counts once they load.
+const all = await getPosts();
+---
+<ListPage
+  allPosts={all}
+  posts={all}
+  current="popular"
+  heading={SITE.tagline}
+  showDate
+  title="Popular"
+  description="The most read writing on Hallowed Drafts."
+  noindex
+  isPopular
+  note="Most read, updated as people read."
+/>
