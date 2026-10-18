@@ -2,22 +2,22 @@ import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 
 // Posts live in /posts as Markdown. The file name becomes the URL: /posts/<file-name>.
-// topic, tags and excerpt are filled in by the AI tagging Action when left out;
-// the build refuses a post without them, so an untagged post never goes live.
+//
+// Every field is optional here on purpose: a post that has just been uploaded (and not yet
+// tidied and tagged by the AI tagging Action) must never break the whole site. Posts missing
+// a title, date, topic, tags or excerpt are skipped by getPosts() with a warning in the build
+// log, and appear on the site automatically once the Action has filled them in.
 const posts = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './posts' }),
   schema: z.object({
-    title: z.string().min(1),
-    date: z.coerce.date(),
-    topic: z.enum(['prayer', 'work', 'inner-life', 'ideas']),
-    tags: z
-      .array(z.string().regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, 'Tags must be lowercase-hyphenated'))
-      .min(1)
-      .max(5),
-    excerpt: z.string().min(1),
+    title: z.string().min(1).optional(),
+    date: z.coerce.date().optional().catch(undefined),
+    topic: z.enum(['prayer', 'work', 'inner-life', 'ideas']).optional().catch(undefined),
+    tags: z.array(z.string()).optional().catch(undefined),
+    excerpt: z.string().min(1).optional(),
     translation: z.string().optional(),
     translationNote: z.string().optional(),
-    updated: z.coerce.date().optional(),
+    updated: z.coerce.date().optional().catch(undefined),
     draft: z.boolean().optional(),
   }),
 });

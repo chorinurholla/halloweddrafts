@@ -1,6 +1,7 @@
-# What Actually Matters — Blog Post
-
-Sep 11, 2026 · @Tolu
+---
+title: "What Actually Matters"
+date: 2026-09-11
+---
 
 ## The Teacher Who Refuses to Blink
 
@@ -8,7 +9,7 @@ There's a voice in the Bible that modern readers keep mistaking for a cynic. Qoh
 
 And here's the thing — he's not being pessimistic. He's being *accurate*.
 
-Because if that's true, then the whole status economy we exhaust ourselves inside — the perception management, the self-preservation tactics, the energy spent *appearing* successful — is running a race whose finish line erases the standings. Common mortality demolishes every status game. It's the great equalizer, and it exposes what living for reputation actually is: a very elaborate way of spending a life you can't get back.
+Because if that's true, then the whole status economy we exhaust ourselves inside — the perception management, the self-preservation tactics, the energy spent *appearing* successful — is running a race whose finish line erases the standings. Common mortality demolishes every status game. It's the great equaliser, and it exposes what living for reputation actually is: a very elaborate way of spending a life you can't get back.
 
 So the question Ecclesiastes forces is the one most of us are too busy to ask: if the scoreboard gets wiped, what actually matters?
 

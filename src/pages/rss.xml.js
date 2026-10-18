@@ -1,12 +1,11 @@
 import rss from '@astrojs/rss';
-import { getCollection, render } from 'astro:content';
+import { render } from 'astro:content';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { SITE } from '../lib/site';
+import { getPosts } from '../lib/posts';
 
 export async function GET(context) {
-  const posts = (await getCollection('posts', ({ data }) => !data.draft)).sort(
-    (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
-  );
+  const posts = await getPosts();
   const container = await AstroContainer.create();
   const items = [];
   for (const post of posts) {

@@ -1,14 +1,19 @@
 #!/usr/bin/env node
 // AI tagging for Hallowed Drafts.
-// Finds posts in /posts missing a topic, tags or excerpt, asks Claude to fill them in,
-// validates the answer, and writes it into the post's frontmatter.
-// Fields you filled in yourself are never changed. Title and body are never changed.
 //
-// Needs: ANTHROPIC_API_KEY. Optional: ANTHROPIC_MODEL (default below).
-// Writes a summary to .ai-tag-summary.txt (used as the commit message by the GitHub Action).
-// Exit code 1 if any post could not be tagged, so the Action fails and GitHub emails you.
+// Step 1 — tidy: a post uploaded exactly as exported (starting "# Title — Blog Post" and a
+//   "Sep 11, 2026 · @Tolu" line, with no frontmatter) gets a proper frontmatter block, a clean
+//   file name (what-actually-matters.md), and British spelling outside quoted Scripture.
+// Step 2 — tag: posts missing a topic, tags or excerpt are sent to Claude; the answer is
+//   validated and written into the frontmatter. Fields you filled in yourself are never changed.
+//   The post's wording is never changed by Claude.
+//
+// Needs ANTHROPIC_API_KEY for step 2. Optional: ANTHROPIC_MODEL.
+// Writes .ai-tag-summary.txt (the commit message used by the GitHub Action).
+// Exits 1 if any post could not be tagged, so the Action fails and GitHub emails you.
+// Untagged posts never break the site: the build skips them until they are tagged.
 
-import { readFileSync, writeFileSync, readdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, readdirSync, renameSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 
 const POSTS_DIR = 'posts';
@@ -16,12 +21,12 @@ const TOPICS = ['prayer', 'work', 'inner-life', 'ideas'];
 const TAG_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-5-5';
 const API_KEY = process.env.ANTHROPIC_API_KEY;
+const summary = [];
 
-// ---------- Minimal frontmatter handling (keeps your formatting intact) ----------
+// ---------- Frontmatter helpers (keep your formatting intact) ----------
 function split(src) {
-  const m = src.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);
-  if (!m) throw new Error('No frontmatter block found (the file must start with ---)');
-  return { fm: m[1], body: m[2] };
+  const m = src.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
+  return m ? { fm: m[1], body: m[2] } : null;
 }
 function field(fm, key) {
   const m = fm.match(new RegExp(`^${key}:\\s*(.*)$`, 'm'));
@@ -38,41 +43,127 @@ function setField(fm, key, value) {
 }
 const q = (s) => `"${String(s).replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
 
-// ---------- Collect posts ----------
-const files = readdirSync(POSTS_DIR).filter((f) => f.endsWith('.md')).sort();
-const posts = files.map((f) => {
+// ---------- Step 1: tidy raw exports ----------
+const MONTHS = { jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6, jul: 7, aug: 8, sep: 9, sept: 9, oct: 10, nov: 11, dec: 12 };
+const slugify = (s) =>
+  s.toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/['’]/g, '')
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 80);
+
+// British spelling for prose. Text inside straight double quotes (quoted Scripture) is left alone.
+const KEEP_IZE = /^(size|sizes|sized|prize|prizes|prized|seize|seizes|seized|seizing|capsize|baize|maize)$/i;
+const UK = {
+  center: 'centre', centers: 'centres', centered: 'centred', honor: 'honour', honors: 'honours', honored: 'honoured',
+  honorable: 'honourable', favor: 'favour', favorite: 'favourite', behavior: 'behaviour', behaviors: 'behaviours',
+  behavioral: 'behavioural', neighbor: 'neighbour', neighbors: 'neighbours', color: 'colour', colors: 'colours',
+  labor: 'labour', armor: 'armour', harbor: 'harbour', gray: 'grey', traveler: 'traveller', travelers: 'travellers',
+  traveled: 'travelled', traveling: 'travelling', fueled: 'fuelled', fueling: 'fuelling', skeptic: 'sceptic',
+  skeptical: 'sceptical', judgment: 'judgement', catalog: 'catalogue', defense: 'defence', offense: 'offence',
+  endeavor: 'endeavour', savior: 'saviour', splendor: 'splendour', rumor: 'rumour', vapor: 'vapour',
+};
+function britishWord(w) {
+  const lower = w.toLowerCase();
+  let out = UK[lower];
+  if (!out && /iz(e|es|ed|ing|ation|ations|er|ers)$/i.test(w) && !KEEP_IZE.test(w)) out = lower.replace(/iz(?=(e|es|ed|ing|ation|ations|er|ers)$)/, 'is');
+  if (!out) out = lower.replace(/yz(e|es|ed|ing)$/, 'ys$1');
+  if (out === lower) return w;
+  return w[0] === w[0].toUpperCase() ? out[0].toUpperCase() + out.slice(1) : out;
+}
+function toBritish(text) {
+  return text.split('\n').map((line) =>
+    line.split(/("[^"]*")/).map((part) =>
+      part.startsWith('"') && part.endsWith('"') && part.length > 1 ? part : part.replace(/[A-Za-z]+/g, britishWord),
+    ).join(''),
+  ).join('\n');
+}
+
+function tidyRaw(file, src) {
+  const lines = src.replace(/\r\n/g, '\n').split('\n');
+  const h = lines.findIndex((l) => l.trim());
+  const heading = (lines[h] || '').match(/^#\s+(.+?)\s*$/);
+  if (!heading) throw new Error('has no frontmatter and does not start with a "# Title" heading');
+  const title = heading[1].replace(/\s+[—–-]\s+Blog Post\s*$/i, '').trim();
+  let rest = lines.slice(h + 1);
+  let date;
+  const b = rest.findIndex((l) => l.trim());
+  const dm = (rest[b] || '').match(/^([A-Za-z]{3,9})\.?\s+(\d{1,2}),\s*(\d{4})/);
+  const mo = dm && MONTHS[dm[1].slice(0, 3).toLowerCase()];
+  if (mo) {
+    date = `${dm[3]}-${String(mo).padStart(2, '0')}-${dm[2].padStart(2, '0')}`;
+    rest = rest.slice(b + 1);
+  } else {
+    date = new Date().toISOString().slice(0, 10);
+  }
+  const body = toBritish(rest.join('\n').replace(/^\n+/, ''));
+  let slug = slugify(title) || slugify(file.replace(/\.md$/, ''));
+  let target = `${slug}.md`;
+  for (let n = 2; target !== file && existsSync(join(POSTS_DIR, target)); n++) target = `${slug}-${n}.md`;
+  writeFileSync(join(POSTS_DIR, file), `---\ntitle: ${q(title)}\ndate: ${date}\n---\n\n${body.trimEnd()}\n`);
+  if (target !== file) renameSync(join(POSTS_DIR, file), join(POSTS_DIR, target));
+  summary.push(`${target.replace(/\.md$/, '')}: tidied from "${file}" (title, date ${date}, file name, British spelling)`);
+  console.log(`Tidied ${file} -> ${target}`);
+  return target;
+}
+
+for (const f of readdirSync(POSTS_DIR).filter((f) => f.endsWith('.md'))) {
   const src = readFileSync(join(POSTS_DIR, f), 'utf8');
-  const { fm, body } = split(src);
-  return { file: f, src, fm, body, data: {
+  if (split(src)) {
+    // Already has frontmatter; still give it a clean file name if it has spaces or capitals.
+    const clean = slugify(f.replace(/\.md$/, '').replace(/\s+[—–-]\s+Blog Post$/i, ''));
+    if (clean && `${clean}.md` !== f && !existsSync(join(POSTS_DIR, `${clean}.md`)) && /[^a-z0-9-]/.test(f.replace(/\.md$/, ''))) {
+      renameSync(join(POSTS_DIR, f), join(POSTS_DIR, `${clean}.md`));
+      summary.push(`${clean}: renamed from "${f}"`);
+    }
+    continue;
+  }
+  try {
+    tidyRaw(f, src);
+  } catch (err) {
+    console.error(`Could not tidy ${f}: ${err.message}`);
+    summary.push(`${f}: could not tidy (${err.message})`);
+  }
+}
+
+// ---------- Step 2: tag ----------
+const posts = readdirSync(POSTS_DIR).filter((f) => f.endsWith('.md')).sort().flatMap((f) => {
+  const src = readFileSync(join(POSTS_DIR, f), 'utf8');
+  const parts = split(src);
+  if (!parts) return [];
+  const { fm, body } = parts;
+  return [{ file: f, fm, body, data: {
     title: field(fm, 'title'), topic: field(fm, 'topic'), tags: field(fm, 'tags'),
     excerpt: field(fm, 'excerpt'), translation: field(fm, 'translation'), draft: field(fm, 'draft'),
-  } };
+  } }];
 });
 const existingTags = [...new Set(posts.flatMap((p) => (Array.isArray(p.data.tags) ? p.data.tags : [])))].sort();
 const todo = posts.filter((p) => p.data.draft !== 'true' && (!p.data.topic || !p.data.tags?.length || !p.data.excerpt));
 
-if (!todo.length) {
-  console.log('Nothing to tag: every post has a topic, tags and an excerpt.');
-  writeFileSync('.ai-tag-summary.txt', '');
-  process.exit(0);
-}
-if (!API_KEY) {
-  console.error('ANTHROPIC_API_KEY is not set. Add it as a repository secret.');
-  process.exit(1);
+function finish(code) {
+  const names = [...new Set(summary.map((s) => s.split(':')[0]))];
+  const title = `Auto-tag: ${names.join(', ') || 'no changes'}`;
+  writeFileSync('.ai-tag-summary.txt', summary.length ? `${title}\n\n${summary.join('\n')}\n` : '');
+  process.exit(code);
 }
 
-// ---------- Ask Claude ----------
+if (!todo.length) {
+  console.log('Nothing to tag: every post has a topic, tags and an excerpt.');
+  finish(0);
+}
+if (!API_KEY) {
+  console.error('ANTHROPIC_API_KEY is not set. Add it as a repository secret (Settings → Secrets and variables → Actions).');
+  finish(1);
+}
+
 const SYSTEM = `You tag posts for "Hallowed Drafts", a personal journal of close readings of Scripture on prayer, worship and the inner life, and what they mean for how we live and work. British English.
 
 Return ONLY a JSON object, no prose, with these keys:
 - "topic": exactly one of ${JSON.stringify(TOPICS)}.
-  prayer = how we pray; work = work, vocation, integrity, leadership, excellence; inner-life = worship, trust, peace, attention, identity before God; ideas = anything that fits none of these.
+  prayer = how we pray; work = work, vocation, integrity, leadership, excellence, ambition, status; inner-life = worship, trust, peace, attention, identity before God, mortality and meaning; ideas = anything that fits none of these.
   If a post straddles two topics, pick the closest and set "topicNote" to one short sentence saying which other topic it touches.
 - "tags": 2 to 5 tags. Lowercase, singular, hyphenated (e.g. "fear-of-the-lord"). Name the subject, never the mood.
   Reuse tags from the EXISTING TAGS list wherever one fits. Add at most ONE new tag, only if nothing existing fits.
-  Use a Bible-book tag (e.g. "isaiah", "ephesians") when a passage from that book is central to the post.
+  Use a Bible-book tag (e.g. "isaiah", "ecclesiastes") when a passage from that book is central to the post.
   Do not use a tag identical to a topic name unless it is already in the existing list.
-- "excerpt": 140 to 180 characters. In the author's own voice and person. Plain text: no quotation marks, no emoji, no hype, no clickbait question.
+- "excerpt": 140 to 180 characters. In the author's own voice and person. Plain text: no quotation marks, no emoji, no hype, no clickbait question. British spelling.
 - "quotesScripture": true if the post quotes Bible verses in quotation marks.
 - "scriptureFlags": an array of short notes for any quoted verse whose wording is clearly not the ESV (name the verse and the likely translation). Empty array if none or unsure.`;
 
@@ -85,18 +176,13 @@ POST:
 ${post.body.slice(0, 40000)}`;
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
-    headers: {
-      'x-api-key': API_KEY,
-      'anthropic-version': '2023-06-01',
-      'content-type': 'application/json',
-    },
+    headers: { 'x-api-key': API_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
     body: JSON.stringify({ model: MODEL, max_tokens: 800, system: SYSTEM, messages: [{ role: 'user', content: user }] }),
   });
   if (!res.ok) throw new Error(`API ${res.status}: ${(await res.text()).slice(0, 300)}`);
   const json = await res.json();
   const text = (json.content || []).filter((c) => c.type === 'text').map((c) => c.text).join('');
-  const obj = JSON.parse(text.slice(text.indexOf('{'), text.lastIndexOf('}') + 1));
-  return obj;
+  return JSON.parse(text.slice(text.indexOf('{'), text.lastIndexOf('}') + 1));
 }
 
 function validate(out) {
@@ -116,7 +202,6 @@ function validate(out) {
   return errors;
 }
 
-const summary = [];
 let failed = 0;
 for (const post of todo) {
   try {
@@ -133,7 +218,7 @@ for (const post of todo) {
     if (!post.data.topic) { fm = setField(fm, 'topic', out.topic); filled.push(`topic ${out.topic}`); }
     if (!post.data.tags?.length) { fm = setField(fm, 'tags', `[${out.tags.join(', ')}]`); filled.push(`tags ${out.tags.join(', ')}`); }
     if (!post.data.excerpt) { fm = setField(fm, 'excerpt', q(out.excerpt)); filled.push('excerpt'); }
-    if (!post.data.translation && out.quotesScripture) { fm = setField(fm, 'translation', 'ESV'); }
+    if (!post.data.translation && out.quotesScripture) fm = setField(fm, 'translation', 'ESV');
     writeFileSync(join(POSTS_DIR, post.file), `---\n${fm}\n---\n${post.body.startsWith('\n') ? '' : '\n'}${post.body}`);
 
     const fresh = (out.tags || []).filter((t) => !existingTags.includes(t));
@@ -149,7 +234,4 @@ for (const post of todo) {
     console.error(`Could not tag ${post.file}: ${err.message}`);
   }
 }
-
-const title = `Auto-tag: ${summary.map((s) => s.split(':')[0]).join(', ') || 'no changes'}`;
-writeFileSync('.ai-tag-summary.txt', summary.length ? `${title}\n\n${summary.join('\n')}\n` : '');
-process.exit(failed ? 1 : 0);
+finish(failed ? 1 : 0);
