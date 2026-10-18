@@ -179,16 +179,47 @@ TITLE: ${post.data.title}
 
 POST:
 ${post.body.slice(0, 40000)}`;
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: { 'x-api-key': API_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
-    body: JSON.stringify({ model: MODEL, max_tokens: 800, system: SYSTEM, messages: [{ role: 'user', content: user }] }),
-  });
+  const base = { model: MODEL, max_tokens: 4096, system: SYSTEM, messages: [{ role: 'user', content: user }] };
+  // Newer models think before answering by default, which can use up the reply. Ask for no
+  // up-front thinking and a guaranteed JSON shape; fall back to a plain request if a model
+  // (e.g. one set through ANTHROPIC_MODEL) doesn't accept those settings.
+  const tuned = {
+    ...base,
+    thinking: { type: 'between_tools' },
+    output_config: { effort: 'low', format: { type: 'json_schema', schema: OUTPUT_SCHEMA } },
+  };
+  const call = (body) =>
+    fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'x-api-key': API_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+  let res = await call(tuned);
+  if (res.status === 400) res = await call(base);
   if (!res.ok) throw new Error(`API ${res.status}: ${(await res.text()).slice(0, 300)}`);
   const json = await res.json();
   const text = (json.content || []).filter((c) => c.type === 'text').map((c) => c.text).join('');
-  return JSON.parse(text.slice(text.indexOf('{'), text.lastIndexOf('}') + 1));
+  const start = text.indexOf('{');
+  if (start === -1) {
+    const types = (json.content || []).map((c) => c.type).join(', ') || 'none';
+    throw new Error(`no JSON in reply (stop_reason: ${json.stop_reason}; blocks: ${types})`);
+  }
+  return JSON.parse(text.slice(start, text.lastIndexOf('}') + 1));
 }
+
+const OUTPUT_SCHEMA = {
+  type: 'object',
+  properties: {
+    topic: { type: 'string', enum: TOPICS },
+    topicNote: { type: 'string' },
+    tags: { type: 'array', items: { type: 'string' } },
+    excerpt: { type: 'string' },
+    quotesScripture: { type: 'boolean' },
+    scriptureFlags: { type: 'array', items: { type: 'string' } },
+  },
+  required: ['topic', 'tags', 'excerpt', 'quotesScripture', 'scriptureFlags'],
+  additionalProperties: false,
+};
 
 function validate(out) {
   const errors = [];
