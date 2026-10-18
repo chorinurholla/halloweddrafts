@@ -1,6 +1,10 @@
 ---
 title: "What Actually Matters"
 date: 2026-09-11
+topic: work
+tags: [work, integrity, trust, identity]
+excerpt: "Qoheleth stares at death and does not blink. If the scoreboard gets wiped, I have to ask what really matters: the people in front of me, and wholehearted work done unseen."
+translation: ESV
 ---
 
 ## The Teacher Who Refuses to Blink
