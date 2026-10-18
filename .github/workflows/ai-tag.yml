@@ -3,7 +3,7 @@ name: AI tagging
 on:
   push:
     branches: [main]
-    paths: ['posts/**']
+    paths: ['posts/**', 'scripts/ai-tag.mjs', '.github/workflows/ai-tag.yml']
   workflow_dispatch:
 
 permissions:

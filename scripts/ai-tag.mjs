@@ -22,6 +22,8 @@ const TAG_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-5-5';
 const API_KEY = process.env.ANTHROPIC_API_KEY;
 const summary = [];
+// Surface errors as GitHub annotations (visible on the run page and through the API).
+const annotate = (msg) => { if (process.env.GITHUB_ACTIONS) console.log(`::error title=AI tagging::${msg.replace(/\r?\n/g, ' ')}`); };
 
 // ---------- Frontmatter helpers (keep your formatting intact) ----------
 function split(src) {
@@ -119,6 +121,7 @@ for (const f of readdirSync(POSTS_DIR).filter((f) => f.endsWith('.md'))) {
     tidyRaw(f, src);
   } catch (err) {
     console.error(`Could not tidy ${f}: ${err.message}`);
+    annotate(`Could not tidy ${f}: ${err.message}`);
     summary.push(`${f}: could not tidy (${err.message})`);
   }
 }
@@ -149,7 +152,9 @@ if (!todo.length) {
   finish(0);
 }
 if (!API_KEY) {
-  console.error('ANTHROPIC_API_KEY is not set. Add it as a repository secret (Settings → Secrets and variables → Actions).');
+  const msg = 'ANTHROPIC_API_KEY is not set. Add it as a repository secret (Settings → Secrets and variables → Actions).';
+  console.error(msg);
+  annotate(msg);
   finish(1);
 }
 
@@ -232,6 +237,7 @@ for (const post of todo) {
   } catch (err) {
     failed++;
     console.error(`Could not tag ${post.file}: ${err.message}`);
+    annotate(`Could not tag ${post.file}: ${err.message}`);
   }
 }
 finish(failed ? 1 : 0);
