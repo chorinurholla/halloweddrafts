@@ -3,7 +3,7 @@ name: AI tagging
 on:
   push:
     branches: [main]
-    paths: ['posts/**']
+    paths: ['posts/**', 'scripts/ai-tag.mjs', '.github/workflows/ai-tag.yml']
   workflow_dispatch:
 
 permissions:
@@ -21,19 +21,22 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Fill in missing topic, tags and excerpts
+      - name: Tidy new posts and fill in topic, tags and excerpts
+        id: tag
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           ANTHROPIC_MODEL: ${{ vars.ANTHROPIC_MODEL }}
         run: node scripts/ai-tag.mjs
       - name: Save changes
+        if: always()
         run: |
-          if [ -s .ai-tag-summary.txt ] && ! git diff --quiet -- posts; then
+          if [ -s .ai-tag-summary.txt ] && [ -n "$(git status --porcelain -- posts)" ]; then
             git config user.name "hallowed-drafts-tagger"
             git config user.email "github-actions[bot]@users.noreply.github.com"
-            git add posts
+            git add -A posts
             git commit -F .ai-tag-summary.txt
             git push
+            if [ "${{ steps.tag.outcome }}" = "failure" ]; then exit 1; fi
           else
             echo "No changes to save."
           fi

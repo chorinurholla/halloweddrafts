@@ -1,12 +1,50 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { TOPIC_ORDER, type TopicKey } from './site';
 
-export type Post = CollectionEntry<'posts'>;
+type Entry = CollectionEntry<'posts'>;
+/** A post that is ready to publish: every required field is present. */
+export type Post = Omit<Entry, 'data'> & {
+  data: Entry['data'] & { title: string; date: Date; topic: TopicKey; tags: string[]; excerpt: string };
+};
 
-/** Published posts, newest first. */
-export async function getPosts(): Promise<Post[]> {
-  const all = await getCollection('posts', ({ data }) => !data.draft);
-  return all.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const TAG_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
+function missing(e: Entry): string[] {
+  const d = e.data;
+  const m: string[] = [];
+  if (!d.title) m.push('title');
+  if (!d.date || isNaN(d.date.valueOf())) m.push('date');
+  if (!d.topic) m.push('topic');
+  if (!d.tags?.length || d.tags.length > 5 || !d.tags.every((t) => TAG_RE.test(t))) m.push('tags');
+  if (!d.excerpt) m.push('excerpt');
+  return m;
+}
+
+let cache: Promise<Post[]> | undefined;
+const warned = new Set<string>();
+
+/**
+ * Published posts, newest first. Drafts are left out, and so are posts still waiting for the
+ * AI tagging Action (missing title, date, topic, tags or excerpt) — those are named in the
+ * build log so they are easy to spot, and never stop the rest of the site from publishing.
+ */
+export function getPosts(): Promise<Post[]> {
+  cache ??= getCollection('posts').then((all) => {
+    const ready: Post[] = [];
+    for (const e of all) {
+      if (e.data.draft) continue;
+      const m = missing(e);
+      if (m.length) {
+        if (!warned.has(e.id)) {
+          warned.add(e.id);
+          console.warn(`[hallowed-drafts] Skipping "${e.filePath ?? e.id}" until it is tagged (missing: ${m.join(', ')}).`);
+        }
+        continue;
+      }
+      ready.push(e as Post);
+    }
+    return ready.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+  });
+  return cache;
 }
 
 export function readingMinutes(post: Post): number {

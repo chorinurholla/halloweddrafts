@@ -4,31 +4,38 @@ halloweddrafts.com — a personal journal. Astro static site on Netlify, with se
 
 ## Publishing a post
 
-1. Add a Markdown file to `posts/`. The file name becomes the URL: `posts/my-new-post.md` → `/posts/my-new-post`.
-2. Start it with:
+**Simplest way:** upload the post exactly as you export it (for example `What Actually Matters — Blog Post.md`, starting with `# Title — Blog Post` and a `Sep 11, 2026 · @Tolu` line) into the `posts/` folder on GitHub.
 
-   ```markdown
-   ---
-   title: "My New Post"
-   date: 2026-11-01
-   ---
+Within about two minutes the **AI tagging** Action:
 
-   Your post, in normal Markdown. Use ## for section headings.
+1. tidies it: adds the title and date, renames the file to a clean web address (`/posts/what-actually-matters`) and switches to British spelling outside quoted Scripture;
+2. tags it: Claude adds `topic`, `tags`, `excerpt` and `translation`;
+3. saves the change, and Netlify publishes the post.
 
-   ---
+Until that finishes, the site keeps building without the new post, so nothing breaks.
 
-   **A question to sit with this week:**
+You can also write the settings yourself at the top of the file:
 
-   Anything after the last --- becomes the closing reflection block.
-   ```
+```markdown
+---
+title: "My New Post"
+date: 2026-11-01
+---
 
-3. Push (or upload) it to GitHub. The **AI tagging** Action adds `topic`, `tags`, `excerpt` and `translation`, saves the change, and Netlify publishes. Allow about two minutes.
+Your post, in normal Markdown. Use ## for section headings.
 
-You can write any of those fields yourself; the AI never overwrites them. To re-tag a post, delete its `tags:` line and push again. Add `draft: true` to keep a post off the site.
+---
+
+**A question to sit with this week:**
+
+Anything after the last --- becomes the closing reflection block.
+```
+
+The AI never overwrites a field you filled in. To re-tag a post, delete its `tags:` line and push again. Add `draft: true` to keep a post off the site.
 
 Optional fields: `updated: 2026-11-05` (shows "Updated …"), `translationNote: "…"` (replaces the default "Scripture quotations are from the ESV.").
 
-**If tagging fails** (for example the API is down), the post simply isn't published yet: the build refuses posts without a topic, tags and excerpt, and the live site stays as it was. GitHub emails you; re-run the Action from the Actions tab or fill the fields in by hand.
+**If tagging fails** (for example the API key is missing or the API is down), the post is tidied but not shown yet. GitHub emails you; fix the cause and re-run the Action from the Actions tab (AI tagging → Run workflow), or fill the fields in by hand. The build log on Netlify names any post it skipped.
 
 ## Changing site wording
 
