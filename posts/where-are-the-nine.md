@@ -1,6 +1,11 @@
-# Where Are the Nine — Blog Post
-
-Oct 18, 2026 · @Tolu
+---
+title: "Where Are the Nine"
+date: 2026-10-18
+topic: inner-life
+tags: [worship, trust, focus, idolatry]
+excerpt: "Ten lepers were healed and only one turned back. I looked for the reasons the nine kept walking, and found five quiet forces that keep me from saying thank you."
+translation: ESV
+---
 
 ## Ten Healed. One Returned.
 
@@ -54,9 +59,9 @@ The fifth force is the subtlest, because it comes dressed as obedience.
 
 The nine had an airtight rationale: *We're doing exactly what He told us to do. Go to the priests — that's the command, that's Leviticus, that's the procedure. We'll thank Him later, once we're certified.* Rational. Defensible. Even biblical. And it walked them right past the moment.
 
-To be careful here: logic itself isn't the enemy. God gave us minds and expects us to use them. The problem is logic weaponized to justify spiritual delay — because delayed gratitude is deferred worship, and deferred worship has a way of becoming forgotten worship. "Later" is where thank-yous go to die.
+To be careful here: logic itself isn't the enemy. God gave us minds and expects us to use them. The problem is logic weaponised to justify spiritual delay — because delayed gratitude is deferred worship, and deferred worship has a way of becoming forgotten worship. "Later" is where thank-yous go to die.
 
-And here's the detail that closes every escape hatch: the Samaritan had the same instructions and the same logical next step. He turned back anyway. The difference between him and the nine wasn't intelligence — it was disposition. His faith wasn't irrational; it was *prioritized*. He decided that stopping to worship the Healer mattered more than procedural efficiency.
+And here's the detail that closes every escape hatch: the Samaritan had the same instructions and the same logical next step. He turned back anyway. The difference between him and the nine wasn't intelligence — it was disposition. His faith wasn't irrational; it was *prioritised*. He decided that stopping to worship the Healer mattered more than procedural efficiency.
 
 Which exposes what was really going on underneath. The nine had faith in the process: go to the priests, get declared clean, re-enter life. The one had faith in the Person. All ten believed enough to be healed. Only one believed the Healer was worth more than the healing.
 
@@ -72,7 +77,7 @@ A few that have teeth:
 
 **Change your denominator.** When you catch yourself measuring sideways — why did they get that? — swap the question: why do I have anything at all? The first question breeds entitlement on a good day and bitterness on a bad one. The second breeds worship on both.
 
-**Go back in person.** When a human being's help changed something for you, don't text it. Return, look them in the eye, and tell them what their help produced. The Samaritan didn't send word. He came back. Presence is a form of honor that costs something — which is exactly why it means something.
+**Go back in person.** When a human being's help changed something for you, don't text it. Return, look them in the eye, and tell them what their help produced. The Samaritan didn't send word. He came back. Presence is a form of honour that costs something — which is exactly why it means something.
 
 ---
 
