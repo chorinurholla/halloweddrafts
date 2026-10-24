@@ -1,6 +1,11 @@
-# The Decoder — Blog Post
-
-Oct 22, 2026 · @Tolu
+---
+title: "The Decoder"
+date: 2026-10-22
+topic: inner-life
+tags: [fear-of-the-lord, holy-spirit, praying-scripture, hosea]
+excerpt: "If error borrows truth's vocabulary, how do I tell the two apart? Scripture answers with a posture, a Person and a book, and then warns that knowing obliges us to change."
+translation: ESV
+---
 
 ## If Error Wears Truth's Clothing, How Do You Find the Real Thing?
 

@@ -1,6 +1,11 @@
-# Borrowed Philosophy — Blog Post
-
-Oct 21, 2026 · @Tolu
+---
+title: "Borrowed Philosophy"
+date: 2026-10-21
+topic: ideas
+tags: [hosea, praying-scripture, idolatry, integrity, trust]
+excerpt: "Most of what I believe, I never checked. Hosea 4 and 2 Peter 2 show how borrowed error passes for truth, and I suggest a four-step inventory for auditing what I know."
+translation: ESV
+---
 
 ## Most of What You Know, You Never Checked
 
@@ -20,7 +25,7 @@ Hosea 4 reads like a prosecutor's opening statement. God files formal charges ag
 
 But watch where the prosecution locates the *cause*. Not in the chaos itself. One verse earlier: "there is no faithfulness or steadfast love, and *no knowledge of God* in the land" (v. 1). And then the famous verdict: "My people are destroyed for lack of knowledge" (v. 6).
 
-The structure matters enormously. The surface wreckage — the lying, the violence, the betrayal — is the symptom. Eroded foundational knowledge is the disease. The people didn't suddenly become worse people; the orienting knowledge that would have shaped them differently had quietly drained out of the culture, and behavior fractured downstream of the leak.
+The structure matters enormously. The surface wreckage — the lying, the violence, the betrayal — is the symptom. Eroded foundational knowledge is the disease. The people didn't suddenly become worse people; the orienting knowledge that would have shaped them differently had quietly drained out of the culture, and behaviour fractured downstream of the leak.
 
 And here's the detail that should keep leaders and teachers up at night: God traces the leak to the priests. "Because *you* have rejected knowledge, I reject you" (v. 6). The people responsible for transmitting truth stopped transmitting it — so an entire generation inherited a broken system and never knew anything was missing. They operated on borrowed error with complete sincerity.
 
@@ -38,7 +43,7 @@ And this is what makes the knowledge of error so much deadlier than simple ignor
 
 ## The Freedom That Enslaves
 
-Peter goes one step further and names the error's favorite sales pitch: "They promise them freedom, but they themselves are slaves of corruption. For whatever overcomes a person, to that he is enslaved" (2 Peter 2:19).
+Peter goes one step further and names the error's favourite sales pitch: "They promise them freedom, but they themselves are slaves of corruption. For whatever overcomes a person, to that he is enslaved" (2 Peter 2:19).
 
 That's the knowledge of error's signature move in every generation: it markets itself as liberation. Throw off the outdated constraints. Follow your heart. Live your truth. Answer to no one. The pitch is always escape from authority — and the product is always a new master. The person who buys it doesn't feel destroyed. They feel free — right up until they notice they can't stop.
 
