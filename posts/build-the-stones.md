@@ -1,6 +1,10 @@
 ---
 title: "Build the Stones"
 date: 2026-10-27
+topic: inner-life
+tags: [joshua, hosea]
+excerpt: "God's first command after the Jordan crossing was to build a pile of stones. I look at why monuments exist to provoke questions, and what that means for communion and for us."
+translation: ESV
 ---
 
 ## The Strangest Instruction at the Jordan
