@@ -2,7 +2,7 @@
 title: "The Amnesia of Abundance"
 date: 2026-10-26
 topic: inner-life
-tags: [deuteronomy, hosea, trust, idolatry, rest]
+tags: [deuteronomy, hosea, remembrance, trust, idolatry]
 excerpt: "We brace for crisis, but Moses warns that the real danger comes with fullness, when provision arrives through our own competence and we quietly stop remembering Who gives it."
 translation: ESV
 ---

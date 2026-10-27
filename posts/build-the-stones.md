@@ -2,7 +2,7 @@
 title: "Build the Stones"
 date: 2026-10-27
 topic: inner-life
-tags: [joshua, hosea]
+tags: [joshua, remembrance, hosea]
 excerpt: "God's first command after the Jordan crossing was to build a pile of stones. I look at why monuments exist to provoke questions, and what that means for communion and for us."
 translation: ESV
 ---
@@ -17,7 +17,7 @@ A pile of rocks. That's the move. Before the first battle, before a single city 
 
 And His stated reason is even stranger than the instruction: "When your children ask their fathers in times to come, '*What do these stones mean?*' then you shall let your children know: Israel passed over this Jordan on dry ground" (vv. 21–22).
 
-In the last post I argued that forgetting is the default — that prosperity quietly erases the memory of the God who provided it. This is God's counter-engineering, and it's worth studying closely, because the design principle inside it runs all the way from a riverbed in Canaan to the bread and cup on a communion table.
+[In the last post](/posts/the-amnesia-of-abundance) I argued that forgetting is the default — that prosperity quietly erases the memory of the God who provided it. This is God's counter-engineering, and it's worth studying closely, because the design principle inside it runs all the way from a riverbed in Canaan to the bread and cup on a communion table.
 
 ## Monuments Don't Preserve Memory. They Provoke Questions.
 
