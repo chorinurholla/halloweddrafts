@@ -1,6 +1,7 @@
-# Build the Stones — Blog Post
-
-Oct 27, 2026 · @Tolu
+---
+title: "Build the Stones"
+date: 2026-10-27
+---
 
 ## The Strangest Instruction at the Jordan
 
@@ -44,7 +45,7 @@ Which reframes what's happening next time the tray passes down your row. It isn'
 
 If you want to know what happens when the stones stand but nobody tells the story, Scripture runs the experiment for us — and the results are brutal.
 
-Judges 2:10, one generation after Joshua: "There arose another generation after them *who did not know the LORD or the work that he had done for Israel.*" The very next verses: they serve the Baals. The children of the people who walked through the Jordan on dry ground are worshiping the gods of the neighbors.
+Judges 2:10, one generation after Joshua: "There arose another generation after them *who did not know the LORD or the work that he had done for Israel.*" The very next verses: they serve the Baals. The children of the people who walked through the Jordan on dry ground are worshiping the gods of the neighbours.
 
 One generation. From conquest to apostasy. The monuments were presumably still standing — but somewhere between Joshua's death and Judges 2, the transmission failed. Either the children stopped asking, or the parents stopped answering. Either way, the story died, and the faith died with it.
 
