@@ -71,7 +71,7 @@ const ogImageUrl = new URL(ogImage, SITE.url).href;
 
     <footer class="site-footer">
       <div class="wrap">
-        <span>© {new Date().getFullYear()} {SITE.name}</span>
+        <span>© <span data-current-year>{new Date().getFullYear()}</span> {SITE.name}</span>
         <span aria-hidden="true">·</span>
         <a href="/rss.xml">RSS<span class="visually-hidden"> feed</span></a>
       </div>

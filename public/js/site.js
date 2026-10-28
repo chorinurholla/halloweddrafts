@@ -146,7 +146,23 @@
   }
 
   /* ---------- Boot ---------- */
+  /* ---------- Current month and year ---------- */
+  // The build writes the month and year it was built in; this keeps them current between builds,
+  // using the reader's own clock.
+  function syncDates() {
+    var now = new Date();
+    var month = now.toLocaleString('en-GB', { month: 'long' });
+    var year = String(now.getFullYear());
+    document.querySelectorAll('[data-current-month]').forEach(function (el) {
+      if (el.textContent !== month) el.textContent = month;
+    });
+    document.querySelectorAll('[data-current-year]').forEach(function (el) {
+      if (el.textContent !== year) el.textContent = year;
+    });
+  }
+
   function init() {
+    syncDates();
     syncThemeButton();
     dialog = document.querySelector('[data-search-dialog]');
     input = document.querySelector('[data-search-input]');

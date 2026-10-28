@@ -43,7 +43,7 @@ const pageHref = (n: number) => (n === 1 ? baseHref || '/' : `${baseHref}/page/$
   <div class="list-layout">
     <section class="intro" aria-labelledby="page-heading">
       {showDate && (
-        <p class="journal-date"><span>{month}</span><span>{year}</span></p>
+        <p class="journal-date"><span data-current-month>{month}</span><span data-current-year>{year}</span></p>
       )}
       <h1 class="statement" id="page-heading">
         {isHome && <span class="visually-hidden">{SITE.name}: </span>}{heading}
