@@ -1,6 +1,11 @@
-# Teleprompter — Blog Post
-
-May 13, 2026 · @Tolu
+---
+title: "Teleprompter"
+date: 2026-05-13
+topic: inner-life
+tags: [identity, john, trust, work]
+excerpt: "A single word from a dream sat unexplained for eighteen months. John 4 showed me why I was waiting for a cleaner résumé, and why the woman at the well never did."
+translation: ESV
+---
 
 ## One Word, Eighteen Months Ago
 
@@ -32,7 +37,7 @@ I know now what that waiting actually was. But it took a Sunday service and a tw
 
 Recently, in church, we landed on John 4 — Jesus and the Samaritan woman. I've read that chapter before. I've probably skimmed past it a dozen times. This time it read me.
 
-Look at who this woman was, by every standard her world used. The wrong ethnicity — a Samaritan, in a day when Jews traveled *around* Samaria rather than through it. The wrong history — five husbands, and the man she was living with was not her husband. The wrong theology — worshiping on the wrong mountain, by Jerusalem's reckoning. Even the wrong social standing among her own people — she came to draw water alone, at noon, in the heat, when the other women came together in the cool of the morning. An outcast's schedule. You keep those hours when you're avoiding people.
+Look at who this woman was, by every standard her world used. The wrong ethnicity — a Samaritan, in a day when Jews travelled *around* Samaria rather than through it. The wrong history — five husbands, and the man she was living with was not her husband. The wrong theology — worshiping on the wrong mountain, by Jerusalem's reckoning. Even the wrong social standing among her own people — she came to draw water alone, at noon, in the heat, when the other women came together in the cool of the morning. An outcast's schedule. You keep those hours when you're avoiding people.
 
 And Jesus went through Samaria to meet her. Spoke to her first. Told her everything she ever did — all five husbands, the current arrangement, the whole hidden résumé — and here is the detail that undid me: *He didn't condemn her.* No lecture. No probation period. No "sort your life out and come back." He saw all of it and offered her living water in the same breath, and then revealed Himself to her — "I who speak to you am he" — before the religious establishment heard anything of the kind.
 
