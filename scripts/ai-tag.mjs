@@ -229,8 +229,16 @@ function validate(out) {
     out.tags = [...new Set(out.tags.map((t) => String(t).trim().toLowerCase()))];
     const bad = out.tags.filter((t) => !TAG_RE.test(t));
     if (bad.length) errors.push(`badly formed tags: ${bad.join(', ')}`);
+    // Keep the tag list tidy without failing: if Claude proposes several new tags, keep the
+    // existing ones plus the first new one (Claude lists tags most-relevant first). Only if that
+    // leaves fewer than 2 tags are further new tags kept, up to 2 in total.
     const fresh = out.tags.filter((t) => !existingTags.includes(t));
-    if (existingTags.length && fresh.length > 1) errors.push(`more than one new tag: ${fresh.join(', ')}`);
+    if (existingTags.length && fresh.length > 1) {
+      const known = out.tags.filter((t) => existingTags.includes(t));
+      const keepNew = fresh.slice(0, Math.max(1, 2 - known.length));
+      out.droppedTags = fresh.filter((t) => !keepNew.includes(t));
+      out.tags = out.tags.filter((t) => known.includes(t) || keepNew.includes(t));
+    }
   }
   const ex = String(out.excerpt || '').trim().replace(/["“”]/g, '');
   out.excerpt = ex;
@@ -261,6 +269,7 @@ for (const post of todo) {
     let line = `${post.file.replace(/\.md$/, '')}: ${filled.join('; ')}`;
     if (fresh.length) line += ` (new tag: ${fresh.join(', ')})`;
     if (out.topicNote) line += ` — ${out.topicNote}`;
+    if (out.droppedTags?.length) line += `\n  Also suggested (not added, to keep the tag list tidy): ${out.droppedTags.join(', ')}`;
     if (Array.isArray(out.scriptureFlags) && out.scriptureFlags.length) line += `\n  Check Scripture wording: ${out.scriptureFlags.join(' | ')}`;
     summary.push(line);
     fresh.forEach((t) => existingTags.push(t));

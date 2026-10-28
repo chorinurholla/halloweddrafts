@@ -1,6 +1,11 @@
-# Build the Stones — Blog Post
-
-Oct 27, 2026 · @Tolu
+---
+title: "Build the Stones"
+date: 2026-10-27
+topic: inner-life
+tags: [joshua, remembrance, hosea]
+excerpt: "God's first command after the Jordan crossing was to build a pile of stones. I look at why monuments exist to provoke questions, and what that means for communion and for us."
+translation: ESV
+---
 
 ## The Strangest Instruction at the Jordan
 
@@ -12,7 +17,7 @@ A pile of rocks. That's the move. Before the first battle, before a single city 
 
 And His stated reason is even stranger than the instruction: "When your children ask their fathers in times to come, '*What do these stones mean?*' then you shall let your children know: Israel passed over this Jordan on dry ground" (vv. 21–22).
 
-In the last post I argued that forgetting is the default — that prosperity quietly erases the memory of the God who provided it. This is God's counter-engineering, and it's worth studying closely, because the design principle inside it runs all the way from a riverbed in Canaan to the bread and cup on a communion table.
+[In the last post](/posts/the-amnesia-of-abundance) I argued that forgetting is the default — that prosperity quietly erases the memory of the God who provided it. This is God's counter-engineering, and it's worth studying closely, because the design principle inside it runs all the way from a riverbed in Canaan to the bread and cup on a communion table.
 
 ## Monuments Don't Preserve Memory. They Provoke Questions.
 
@@ -44,7 +49,7 @@ Which reframes what's happening next time the tray passes down your row. It isn'
 
 If you want to know what happens when the stones stand but nobody tells the story, Scripture runs the experiment for us — and the results are brutal.
 
-Judges 2:10, one generation after Joshua: "There arose another generation after them *who did not know the LORD or the work that he had done for Israel.*" The very next verses: they serve the Baals. The children of the people who walked through the Jordan on dry ground are worshiping the gods of the neighbors.
+Judges 2:10, one generation after Joshua: "There arose another generation after them *who did not know the LORD or the work that he had done for Israel.*" The very next verses: they serve the Baals. The children of the people who walked through the Jordan on dry ground are worshiping the gods of the neighbours.
 
 One generation. From conquest to apostasy. The monuments were presumably still standing — but somewhere between Joshua's death and Judges 2, the transmission failed. Either the children stopped asking, or the parents stopped answering. Either way, the story died, and the faith died with it.
 

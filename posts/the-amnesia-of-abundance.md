@@ -1,6 +1,11 @@
-# The Amnesia of Abundance — Blog Post
-
-Oct 26, 2026 · @Tolu
+---
+title: "The Amnesia of Abundance"
+date: 2026-10-26
+topic: inner-life
+tags: [deuteronomy, hosea, remembrance, trust, idolatry]
+excerpt: "We brace for crisis, but Moses warns that the real danger comes with fullness, when provision arrives through our own competence and we quietly stop remembering Who gives it."
+translation: ESV
+---
 
 ## The Danger Zone Isn't Where You Think
 
@@ -34,7 +39,7 @@ Notice what kind of lie this is. It isn't rebellion. It isn't blasphemy. It's an
 
 "I worked hard for this." True — but incomplete. "I made smart decisions." True — but insufficient. "I built this with my own hands." Visible — but theologically false.
 
-The correction Moses insists on is surgical: "You shall remember the LORD your God, for *it is he who gives you power to get wealth*" (v. 18). Read it carefully — it doesn't say God gives you wealth, though He can. It says He gives you the *power* to get it. The strength. The mental clarity. The relational favor. The market timing. The oxygen in your lungs during the negotiation. Even your capacity to work is a gift — which means there is no version of your success story in which you were the sole author.
+The correction Moses insists on is surgical: "You shall remember the LORD your God, for *it is he who gives you power to get wealth*" (v. 18). Read it carefully — it doesn't say God gives you wealth, though He can. It says He gives you the *power* to get it. The strength. The mental clarity. The relational favour. The market timing. The oxygen in your lungs during the negotiation. Even your capacity to work is a gift — which means there is no version of your success story in which you were the sole author.
 
 Any honest accounting of a significant achievement reveals the same thing: the factors outside your control — the providential introduction, the timing you didn't choose, the break you didn't engineer — did more of the heavy lifting than the factors within it. The self-made narrative survives only by leaving those lines off the ledger.
 
@@ -48,7 +53,7 @@ Hosea 4:6 shows where it ends: "My people are destroyed for lack of knowledge...
 
 A generation that doesn't know why it does what it does. Communities held together by pragmatism instead of covenant. Rituals that persist after the knowledge that animated them is gone. Children who know the religion but not the God.
 
-Israel in Hosea's day still had priests, sacrifices, festivals — all the infrastructure, fully staffed. What they'd lost was the memory of the God the infrastructure was built to honor. The form survived. The knowledge didn't. And a form without its knowledge isn't faith on autopilot — it's a building with the load-bearing wall removed, standing only until the next storm.
+Israel in Hosea's day still had priests, sacrifices, festivals — all the infrastructure, fully staffed. What they'd lost was the memory of the God the infrastructure was built to honour. The form survived. The knowledge didn't. And a form without its knowledge isn't faith on autopilot — it's a building with the load-bearing wall removed, standing only until the next storm.
 
 This is why remembrance in Scripture is never nostalgia. It's covenant fidelity — the active discipline of keeping true what comfort keeps eroding. You can't obey what you don't remember. You can't love what you've forgotten. And what you don't deliberately rehearse, you will eventually, inevitably, lose.
 
