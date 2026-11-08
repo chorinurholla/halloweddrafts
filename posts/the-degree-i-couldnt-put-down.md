@@ -1,6 +1,11 @@
-# The Degree I Couldn't Put Down — Blog Post
-
-Nov 7, 2026 · @Tolu
+---
+title: "The Degree I Couldn't Put Down"
+date: 2026-11-07
+topic: work
+tags: [work, identity, trust, leadership, remembrance]
+excerpt: "For ten years I treated an accounting credential as my calling. When two years of closed doors came, I finally asked the question I'd avoided: did God say this, or did I?"
+translation: ESV
+---
 
 ## A Confession About a Credential
 
@@ -12,7 +17,7 @@ And for roughly two years now, that door has not opened. Applications sent, door
 
 Here's the confession, though, and it's the part that cost me something to see: through all of that, it had genuinely never occurred to me to question whether accounting was the assignment at all. Not once. I treated the question as settled — settled by a certificate. When people close to me suggested I look at managerial roles instead, the thought landed as foreign, almost as disloyalty.
 
-And then the sermon asked its question — *what has the Manufacturer actually said about you?* — and I realized I couldn't point to anything. I had been faithful for ten years to something God never said.
+And then the sermon asked its question — *what has the Manufacturer actually said about you?* — and I realised I couldn't point to anything. I had been faithful for ten years to something God never said.
 
 ## The Script I Didn't Know I Was Running
 

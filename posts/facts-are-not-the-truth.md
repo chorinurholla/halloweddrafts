@@ -1,6 +1,11 @@
-# Facts Are Not the Truth — Blog Post
-
-Nov 4, 2026 · @Tolu
+---
+title: "Facts Are Not the Truth"
+date: 2026-11-04
+topic: inner-life
+tags: [identity, trust, image-of-god, creation, psalms]
+excerpt: "A sermon line has stayed with me for weeks: only your Manufacturer knows the truth about you. I test what it unlocks, where it needs a guardrail, and why facts are not truth."
+translation: ESV
+---
 
 ## The Sermon Line That Rearranged My Furniture
 
@@ -28,7 +33,7 @@ And horizontal is where most of us have lived ever since. Having lost contact wi
 
 Every one of those is a measurement taken from creation instead of the Creator. And every one of them shares the same flaw: the reference point keeps moving. Performance dips. Comparison always finds someone ahead of you. Approval is weather. So identity built on environmental measurement is permanently unstable — not because you're weak, but because you're surveying off a landmark that won't hold still.
 
-Measure yourself by the unchanging Word of the One who made you, and the ground stops moving. Not because your circumstances stabilize — because your reference point does.
+Measure yourself by the unchanging Word of the One who made you, and the ground stops moving. Not because your circumstances stabilise — because your reference point does.
 
 ## Why Paul Could Sing in a Prison Cell
 
