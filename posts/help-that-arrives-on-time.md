@@ -1,6 +1,11 @@
-# Help That Arrives on Time — Blog Post
-
-Nov 16, 2026 · @Tolu
+---
+title: "Help That Arrives on Time"
+date: 2026-11-16
+topic: prayer
+tags: [prayer, trust, identity, praying-scripture]
+excerpt: "I used to treat God's throne as somewhere to visit once I'd stabilised. Hebrews 4:16 says the appointed time to come is the emergency itself, mess, fault and all."
+translation: ESV
+---
 
 ## The Three Words We Skim
 
@@ -10,7 +15,7 @@ Most of us know this verse. We quote the front half — the confidence, the thro
 
 Not after the need. Not once the need has been handled and you're presentable again. *In* it.
 
-Because here's how most of us actually operate, whatever our theology says on paper: we treat God's throne like a place you visit once you've stabilized. The crisis hits — the money, the temptation, the diagnosis, the thing you brought on yourself — and some instinct says: *handle it first, pray later. Get your act together, then come. Don't bother God with the mess you made.* We schedule the approach for after the emergency, the way you'd tidy the house before a guest arrives.
+Because here's how most of us actually operate, whatever our theology says on paper: we treat God's throne like a place you visit once you've stabilised. The crisis hits — the money, the temptation, the diagnosis, the thing you brought on yourself — and some instinct says: *handle it first, pray later. Get your act together, then come. Don't bother God with the mess you made.* We schedule the approach for after the emergency, the way you'd tidy the house before a guest arrives.
 
 Hebrews 4:16 says the exact opposite. The appointed time to come is the emergency. The verse doesn't offer grace as a debrief after you've survived; it offers grace as *help* — and help, by definition, is only useful mid-crisis.
 
@@ -22,9 +27,9 @@ To feel the force of "draw near," you have to remember what approaching God's th
 
 Under the Old Covenant, the throne on earth was the mercy seat — the gold lid of the Ark, behind the veil, in the Most Holy Place. One man could approach it. Once a year. Carrying blood. God's instruction to Aaron came with a warning label: don't come in at just any time, "lest he die" (Leviticus 16:2). And the warning wasn't theoretical — Uzzah reached out to steady the Ark with his bare hand and died beside it (2 Samuel 6:6–7). The people stood at a distance by design. The throne was holy the way high voltage is holy: real power, restricted access.
 
-Now listen to Hebrews again: "Let us draw near." *Us.* Plural. All of us — not one priest. Anytime — not one day a year. And the throne has a new name: not the throne of judgment, which it had every right to be called, but "the throne of grace." The seat of total authority doubles as the dispensary of undeserved favor.
+Now listen to Hebrews again: "Let us draw near." *Us.* Plural. All of us — not one priest. Anytime — not one day a year. And the throne has a new name: not the throne of judgement, which it had every right to be called, but "the throne of grace." The seat of total authority doubles as the dispensary of undeserved favour.
 
-What changed? Not God's holiness. The verse before explains it: "We do not have a high priest who is unable to sympathize with our weaknesses, but one who in every respect has been tempted as we are, yet without sin" (4:15). There is Someone standing at the throne on your behalf — and His qualification is double. He's sinless, so He can represent you. And He's been *tested* — exhausted, betrayed, tempted to shortcut, tempted to doubt — so He doesn't sympathize from a distance, the way the never-hungry pity the starving. He sympathizes from experience. He knows the pressure without ever having collapsed under it.
+What changed? Not God's holiness. The verse before explains it: "We do not have a high priest who is unable to sympathize with our weaknesses, but one who in every respect has been tempted as we are, yet without sin" (4:15). There is Someone standing at the throne on your behalf — and His qualification is double. He's sinless, so He can represent you. And He's been *tested* — exhausted, betrayed, tempted to shortcut, tempted to doubt — so He doesn't sympathise from a distance, the way the never-hungry pity the starving. He sympathises from experience. He knows the pressure without ever having collapsed under it.
 
 The access didn't get cheaper. Someone paid the admission in full, and now stands at the door.
 
@@ -62,7 +67,7 @@ It looks like praying *from inside* the moment instead of about it afterward. Th
 
 And notice what you're told to bring: nothing. No record of good deeds, no proof you've earned a hearing, no evidence you've already half-solved it. You bring the need. "In everything by prayer and supplication... let your requests be made known to God" (Philippians 4:6) — in *everything*, not in everything except the shameful stuff, not in everything except the mess you authored yourself.
 
-Which exposes the real obstacle — because for most of us it was never God's willingness. It's the voice that says: *you got yourself into this; don't bother Him with it.* That voice sounds like humility. It is actually the performance treadmill guarding the throne-room door — shame doing sentry duty at an entrance Christ already opened. The verse was written over that voice's objection: the throne dispenses mercy, which by definition is for people who caused their own crisis. If you disqualify yourself for being at fault, you've disqualified yourself from the one throne that specializes in the at-fault.
+Which exposes the real obstacle — because for most of us it was never God's willingness. It's the voice that says: *you got yourself into this; don't bother Him with it.* That voice sounds like humility. It is actually the performance treadmill guarding the throne-room door — shame doing sentry duty at an entrance Christ already opened. The verse was written over that voice's objection: the throne dispenses mercy, which by definition is for people who caused their own crisis. If you disqualify yourself for being at fault, you've disqualified yourself from the one throne that specialises in the at-fault.
 
 The same throne that could justly condemn you is the throne offering you help — and it receives you weak, mid-crisis, at fault, and on time.
 
